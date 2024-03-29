@@ -156,6 +156,7 @@ case "$1" in
         echo "To install nginx: $0 install"
         echo "To configure a site: $0 configure_site site_name http_port"
         echo "To activate a site: $0 active_site site_name"
+        echo "To add a cronjob: $0 add_cronjob"
         exit 1
         ;;
 esac
