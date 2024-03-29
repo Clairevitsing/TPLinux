@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Fonction pour créer un nouvel utilisateur avec un mot de passe
+create_user() {
+    username=$1
+    password=$2
+    if id "$username" &>/dev/null; then
+        echo "L'utilisateur $username existe déjà."
+    else
+        useradd -m $username
+        echo "$username:$password" | chpasswd
+        echo "Utilisateur $username créé avec succès."
+    fi
+}
+
+# Fonction pour installer nginx
+install_nginx() {
+    apt update
+    apt install -y nginx
+    echo "Nginx installé avec succès."
+}
+
+# Fonction pour configurer un site nginx
+configure_site() {
+    site_name=$1
+    http_port=$2
+    config_file="/etc/nginx/sites-available/$site_name"
+
+    cp /etc/nginx/sites-available/default "$config_file"
+    sed -i "s/listen 80;/listen $http_port;/g" "$config_file"
+    sed -i "s/server_name _;/server_name $site_name;/g" "$config_file"
+
+    echo "Fichier de configuration créé pour $site_name dans $config_file"
+}
+
+# Vérification des arguments et appel des fonctions correspondantes
+if [ "$1" == "user" ]; then
+    create_user "$2" "$3"
+elif [ "$1" == "install" ]; then
+    install_nginx
+elif [ "$1" == "configure_site" ]; then
+    configure_site "$2" "$3"
+else
+    echo "Usage: $0 {user <username> <password> | install | configure_site <site_name> [http_port]}"
+    exit 1
+fi
+
