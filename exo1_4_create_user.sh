@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Check if the script is run as root
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Please run this script with sudo or as root."
+    exit 1
+fi
+
+
 username="$1"
 password="$2"
 
